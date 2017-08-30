@@ -137,3 +137,6 @@ tr img{
     color: rgb(238,106,5);
     border-left:2px solid
 }
+.f_w td{
+    font-weight: bold;
+}

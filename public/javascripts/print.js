@@ -62,7 +62,10 @@ var setOrderData = function (str) {
                 costTime += hours +  "小时";
             }
         }
-        startTime = tempTime ;
+        if (i == 0){
+            startTime = tempTime ;
+        }
+
         var str = "";
         str += "<tr class=\"h_l\">";
         str += "<td style='width: 160px;'>" + orderData[i].ScanTime + "</td>";
