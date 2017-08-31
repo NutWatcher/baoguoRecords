@@ -49,9 +49,15 @@ var setOrderData = function (str) {
         inTime = inTime.Format("yyyy-MM-dd hh:mm:ss");
 
         var tempWeight = "---" ;
+        if ( i == 0 ){
+            tempWeight = weight;
+        }
         if (orderData[i].Memo.indexOf("已到达") > 0 ){
-            tempWeight = parseFloat(weight) + (1-Math.random()) ;
+            tempWeight = parseFloat(weight) + parseFloat(weight)*(1-Math.random())/10 ;
             tempWeight = tempWeight.toFixed(1);
+        }
+        if ( i == 0 ){
+            tempWeight = weight;
         }
         var costTime = "---" ;
         if (startTime != null){

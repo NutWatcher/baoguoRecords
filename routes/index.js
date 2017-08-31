@@ -17,16 +17,16 @@ router.post('/order', function(req, res, next) {
         if (code == 200){
             orderHttp.getWeight(order, function (weightCode , baoguoMsg){
                 console.log(weightCode);
-                console.log(baoguoMsg);
+                //console.log(baoguoMsg);
                 var resData = JSON.parse(resMsg);
-                console.log(resData);
+                //console.log(resData);
                 resData.Data.UseInfo.weight = 0.5;
                 if (weightCode == 200){
                     var tempData = JSON.parse(baoguoMsg);
                     if(tempData.result.orderList.length > 0){
                         resData.Data.UseInfo.weight = tempData.result.orderList[0].weight;
                     }
-                    console.log(resData);
+                    //console.log(resData);
                     res.json({
                         code:200,
                         res:JSON.stringify(resData)

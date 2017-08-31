@@ -16,7 +16,7 @@ var getWeight = function (order, cb) {
         console.log("postData finish");
         post_data = querystring.stringify(post_data);
         console.log("报文内容");
-        console.log(post_data);
+        //console.log(post_data);
         var options = {
             host: config.baoguoHost,
             port: config.baoguoPort,
@@ -30,7 +30,7 @@ var getWeight = function (order, cb) {
         var chunks = new Buffer('');
         var req = http.request(options, function(res) {
             console.log('STATUS: ' + res.statusCode);
-            console.log('HEADERS: ' + JSON.stringify(res.headers));
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 chunks = chunks.concat(chunk);
@@ -83,7 +83,7 @@ var getRecords = function getOrderStatus(order, cb) {
         };
         post_data = querystring.stringify(post_data);
         console.log("报文内容");
-        console.log(post_data);
+        //console.log(post_data);
         var options = {
             host:config.host,
             port:config.port,
@@ -97,7 +97,7 @@ var getRecords = function getOrderStatus(order, cb) {
         var chunks = new Buffer('');
         var req = http.request(options, function(res) {
             console.log('STATUS: ' + res.statusCode);
-            console.log('HEADERS: ' + JSON.stringify(res.headers));
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 chunks = chunks.concat(chunk);
