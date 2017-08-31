@@ -50,6 +50,9 @@ textarea{
     color: white;
     float: left;
 }
+.b_o{
+    background-color: rgb(251, 191, 143);
+}
 .left_list_warp{
     clear: both;
     width: 210px;

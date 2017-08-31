@@ -34,7 +34,9 @@ var setOrderData = function (str) {
     $('#order_records').empty();
     var orderData = JSON.parse(str).Data.Records;
     var UseInfo = JSON.parse(str).Data.UseInfo;
+    var weight = UseInfo.weight ;
     var startTime = null ;
+    var resStr = "";
     for (var i = 0 ; i < orderData.length ; i ++){
         var tempTime =convertDateFromString(orderData[i].ScanTime);
         var inTime = new Date(tempTime.getTime());
@@ -46,6 +48,11 @@ var setOrderData = function (str) {
         inTime.setSeconds(inTime.getHours() + random);
         inTime = inTime.Format("yyyy-MM-dd hh:mm:ss");
 
+        var tempWeight = "---" ;
+        if (orderData[i].Memo.indexOf("已到达") > 0 ){
+            tempWeight = parseFloat(weight) + (1-Math.random()) ;
+            tempWeight = tempWeight.toFixed(1);
+        }
         var costTime = "---" ;
         if (startTime != null){
             var costTempTime = tempTime.getTime()-startTime.getTime();
@@ -68,6 +75,9 @@ var setOrderData = function (str) {
 
         var str = "";
         str += "<tr class=\"h_l\">";
+        if ( i == orderData.length -1){
+            str = "<tr class=\"h_l b_o\">";
+        }
         str += "<td style='width: 160px;'>" + orderData[i].ScanTime + "</td>";
         str += "<td class='c_blue'>" + orderData[i].ScanSiteName + "</td>";
         str += "<td>" + orderData[i].ScanType + "</td>";
@@ -81,20 +91,28 @@ var setOrderData = function (str) {
         str += "<td>" + costTime + "</td>";
 
         str += "<td class='c_blue'>" + orderData[i].ScanUser + "</td>";
-        str += "<td>" + orderData[i].Weight + "</td>";
+        str += "<td>" + tempWeight + "</td>";
         str += "<td>" + "</td>";
-        str += "<td style='width: 160px;'>" + "</td>";
-        str += "<td style='width: 160px;'>" + orderData[i].PackageNo + "</td>";
+        str += "<td style='max-width: 160px;'>" + "</td>";
+        str += "<td style='max-width: 160px;'>" + orderData[i].PackageNo + "</td>";
         str += "<td>" + "</td>";
         str += "<td>" + orderData[i].Other + "</td>";
-        str += "<td style='width: 160px;'>" + inTime + "</td>";
-        str += "<td  style='width: 160px;'>" + orderData[i].BqId + "</td>";
+        str += "<td style='max-width: 160px;'>" + inTime + "</td>";
+        str += "<td  style='max-width: 160px;'>" + orderData[i].BqId + "</td>";
 
 
         str += "</tr>";
+        resStr+=str;
         $('#order_records').append(str);
     }
-
+    var resResult = {
+        "records":resStr,
+        "UseSiteName":UseInfo.UseSiteName,
+        "FirstSendSite":UseInfo.FirstSendSite,
+        "CurrentOpSiteName":UseInfo.CurrentOpSiteName,
+        "CurrentOpTime":UseInfo.CurrentOpTime
+    };
+    return resResult;
     //console.log(UseInfo);
     $('#UseSiteName').text(UseInfo.UseSiteName);
     $('#FirstSendSite').text(UseInfo.FirstSendSite);
@@ -102,7 +120,7 @@ var setOrderData = function (str) {
     $('#CurrentOpTime').text(UseInfo.CurrentOpTime);
 
 };
-var ajax_search = function (order) {
+var ajax_search = function (order , cb) {
     $.ajax({
         url:"/order",
         method: "post",
@@ -114,14 +132,102 @@ var ajax_search = function (order) {
                 alert(msg.res);
             }
             else {
-                setOrderData(msg.res);
-                $('#orderNumber').text(order);
-                $('#w_orderNumber_RecordsInfo').text(order + "跟踪记录");
-                $('#w_orderNumber_useInfo').text(order + "面单使用情况");
+                cb(order,msg.res);
+                // setOrderData(msg.res);
+                // $('#orderNumber').text(order);
+                // $('#w_orderNumber_RecordsInfo').text(order + "跟踪记录");
+                // $('#w_orderNumber_useInfo').text(order + "面单使用情况");
 
             }
         }
     })
+};
+var insertRecords = function (orderNumber, resStr) {
+    var parseData = setOrderData(resStr);
+    var str_content =
+        "<div class=\"content_wrap\">\n" +
+        "            <table>\n" +
+        "                <thead class=\"c_gray\">\n" +
+        "                <tr class=\"h_xl \">\n" +
+        "                    <td> <img src=\"/images/text.png\"/><span style=\"font-weight: bold; color: rgb(238,106,5);\"> "+ orderNumber +"</span></td>\n" +
+        "                    <td style=\"text-align: right\"><img src=\"/images/arrow.png\"/></td>\n" +
+        "                </tr>\n" +
+        "                </thead>\n" +
+        "                <tbody>\n" +
+        "                    <tr class=\"h_xl t_c\">\n" +
+        "                        <td>\n" +
+        "                            <div class=\"btn action_btn\">运单发放</div>\n" +
+        "                            <div class=\"btn action_btn\">没有图片</div>\n" +
+        "                            <div class=\"btn action_btn\">订单信息</div>\n" +
+        "                            <div class=\"btn action_btn\">录单记录</div>\n" +
+        "                            <div class=\"btn action_btn\">短信记录</div>\n" +
+        "                            <div class=\"btn action_btn\">车辆信息</div>\n" +
+        "                        </td>\n" +
+        "                        <td></td>\n" +
+        "                    </tr>\n" +
+        "                    <tr class=\"h_xl c_lightGray\"><td><div class=\"s_headWrap\" ></div><span>"+orderNumber+"</span> </td><td></td></tr>\n" +
+        "                </tbody>\n" +
+        "            </table>\n" +
+        "            <table>\n" +
+        "                <thead class=\"c_gray t_c\">\n" +
+        "                    <tr class=\"h_l f_w\">\n" +
+        "                        <td>使用网点</td>\n" +
+        "                        <td>揽件网点</td>\n" +
+        "                        <td>首次发件网点</td>\n" +
+        "                        <td>当前OP</td>\n" +
+        "                        <td>当前OP网点</td>\n" +
+        "                        <td>当前OP时间</td>\n" +
+        "                        <td>当前所在地</td>\n" +
+        "                        <td>出港中心</td>\n" +
+        "                        <td>进港中心</td>\n" +
+        "                    </tr>\n" +
+        "                </thead>\n" +
+        "                <tbody>\n" +
+        "                    <tr class=\"h_l t_c\">\n" +
+        "                        <td >"+parseData.UseSiteName+"</td>\n" +
+        "                        <td >"+parseData.UseSiteName+"</td>\n" +
+        "                        <td >"+parseData.FirstSendSite+"</td>\n" +
+        "                        <td></td>\n" +
+        "                        <td >"+parseData.CurrentOpSiteName+"</td>\n" +
+        "                        <td >"+parseData.CurrentOpTime+"</td>\n" +
+        "                        <td></td>\n" +
+        "                        <td></td>\n" +
+        "                        <td></td>\n" +
+        "                    </tr>\n" +
+        "                </tbody>\n" +
+        "            </table>\n" +
+        "            <table>\n" +
+        "                <thead class=\"c_lightGray\">\n" +
+        "                    <tr class=\"h_xl \">\n" +
+        "                        <td><div class=\"s_headWrap\" ></div> <span>"+orderNumber+"</span></td>\n" +
+        "                    </tr>\n" +
+        "                </thead>\n" +
+        "            </table>\n" +
+        "            <table>\n" +
+        "                <thead class=\"c_gray t_c\">\n" +
+        "                <tr class=\"h_l f_w\">\n" +
+        "                    <td>扫描时间</td>\n" +
+        "                    <td>扫描网店</td>\n" +
+        "                    <td>扫描类型</td>\n" +
+        "                    <td>跟踪记录</td>\n" +
+        "                    <td>用时</td>\n" +
+        "                    <td>扫描员</td>\n" +
+        "                    <td>重量</td>\n" +
+        "                    <td>班次</td>\n" +
+        "                    <td>目的地点</td>\n" +
+        "                    <td>包号</td>\n" +
+        "                    <td>车签号</td>\n" +
+        "                    <td>其他</td>\n" +
+        "                    <td>入库时间</td>\n" +
+        "                    <td>巴枪ID</td>\n" +
+        "                </tr>\n" +
+        "                </thead>\n" +
+        "                <tbody class=\"t_c\">\n" +
+                        parseData.records+
+        "                </tbody>\n" +
+        "            </table>\n" +
+        "        </div>";
+    $('.right_wrap').append(str_content);
 };
 $(function(){
     $('#searchOrder').on('click',function () {
@@ -133,8 +239,12 @@ $(function(){
         $('#left_orderList li').on('click',function (e) {
             var a = $(this);
             console.log($(this).text());
-            ajax_search($(this).text());
+            //ajax_search($(this).text());
         });
-        ajax_search(orderList[0])
+        $('.content_wrap').remove();
+        for (var  i = 0 ; i < orderList.length ; i ++){
+            ajax_search(orderList[i], insertRecords);
+        }
+
     })
 });
