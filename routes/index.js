@@ -25,6 +25,9 @@ router.post('/order', function(req, res, next) {
                     var tempData = JSON.parse(baoguoMsg);
                     if(tempData.result.orderList.length > 0){
                         resData.Data.UseInfo.weight = tempData.result.orderList[0].weight;
+                        if (isNaN(resData.Data.UseInfo.weight) || resData.Data.UseInfo.weight.trim() == ""){
+                            resData.Data.UseInfo.weight = (0.5 + (Math.random()/3)).toFixed(1);
+                        }
                     }
                     //console.log(resData);
                     res.json({
