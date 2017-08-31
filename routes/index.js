@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var orderHttp = require('../servies/http');
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/woyouyizhixiaolaohu', function(req, res, next) {
     res.render('print', { title: 'Express' });
     //res.render('index', { title: 'Express' });
 });
