@@ -24,7 +24,11 @@ router.post('/order', function(req, res, next) {
                 if (weightCode == 200){
                     var tempData = JSON.parse(baoguoMsg);
                     if(tempData.result.orderList.length > 0){
-                        resData.Data.UseInfo.weight = tempData.result.orderList[0].weight;
+                        var tempWeight = tempData.result.orderList[0].weight;
+                        tempWeight= tempWeight.replace("kg","").replace("g","")
+                            .replace("KG","").replace("G","")
+                            .replace("公斤","").replace("斤","")
+                        resData.Data.UseInfo.weight = tempWeight;
                         if (isNaN(resData.Data.UseInfo.weight) || resData.Data.UseInfo.weight.trim() == ""){
                             resData.Data.UseInfo.weight = (0.5 + (Math.random()/3)).toFixed(1);
                         }
