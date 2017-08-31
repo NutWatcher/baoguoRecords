@@ -213,7 +213,7 @@ var insertRecords = function (orderNumber, resStr) {
         "                <thead class=\"c_gray t_c\">\n" +
         "                <tr class=\"h_l f_w\">\n" +
         "                    <td>扫描时间</td>\n" +
-        "                    <td>扫描网店</td>\n" +
+        "                    <td>扫描网点</td>\n" +
         "                    <td>扫描类型</td>\n" +
         "                    <td>跟踪记录</td>\n" +
         "                    <td>用时</td>\n" +
