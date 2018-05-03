@@ -25,9 +25,14 @@ router.post('/order', function(req, res, next) {
                     var tempData = JSON.parse(baoguoMsg);
                     if(tempData.result.orderList.length > 0){
                         var tempWeight = tempData.result.orderList[0].weight;
+                        if (tempWeight ==null){
+                            tempWeight = "";
+                        }
+                        else{
                         tempWeight= tempWeight.replace("kg","").replace("g","")
                             .replace("KG","").replace("G","")
-                            .replace("公斤","").replace("斤","")
+                            .replace("公斤","").replace("斤","");
+                        }
                         resData.Data.UseInfo.weight = tempWeight;
                         if (isNaN(resData.Data.UseInfo.weight) || resData.Data.UseInfo.weight.trim() == ""){
                             resData.Data.UseInfo.weight = (0.5 + (Math.random()/3)).toFixed(1);
